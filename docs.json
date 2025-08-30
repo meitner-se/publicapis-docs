@@ -7,7 +7,7 @@
     "light": "#545EB6",
     "dark": "#7881C6"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "./meitner-favicon.ico",
   "fonts": {
     "family": "Manrope"
   },
@@ -92,8 +92,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "./meitner-logo.svg",
+    "dark": "./meitner-logo.svg"
   },
   "navbar": {
     "links": [
