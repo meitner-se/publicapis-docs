@@ -98,6 +98,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Status",
+        "href": "https://status.meitner.se"
+      },
+      {
         "label": "Support",
         "href": "mailto:hi@mintlify.com"
       }
