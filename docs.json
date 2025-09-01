@@ -51,21 +51,34 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Directory API",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Getting started",
             "pages": [
-              "api-reference/introduction"
+              "directory-api/introduction"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Guides",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "directory-api/guides"
+            ]
+          },
+          {
+            "group": "Reference",
+            "icon": "code",
+            "openapi": "directory-api/openapi.json"
+          }
+        ]
+      },
+      {
+        "tab": "SS12000 API",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "ss12000-api/introduction"
             ]
           }
         ]
@@ -103,7 +116,7 @@
       },
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "https://support.meitner.se"
       }
     ],
     "primary": {
@@ -126,9 +139,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/meitner-se",
+      "linkedin": "https://linkedin.com/company/meitner-skolplattform"
     }
   }
 }
