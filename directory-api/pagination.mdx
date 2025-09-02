@@ -1,0 +1,31 @@
+---
+title: Pagination
+description: '---' # TODO : Update description
+keywords: ['pagination', 'offset', 'limit', 'cursor', 'page', 'size']
+---
+
+List endpoints support pagination using the `offset` and `limit` query parameters:
+
+- `offset` – Number of items to skip (default: `0`)
+- `limit` – Maximum number of items to return (default: `50`)
+
+### Example
+
+```
+GET /student?offset=50&limit=25
+```
+
+Paginated responses include a `pagination` object with the following fields:
+
+```json
+{
+  "data": [ /* array of results */ ],
+  "pagination": {
+    "offset": 50,
+    "limit": 25,
+    "total": 237
+  }
+}
+```
+
+This lets clients know how many items exist in total and how to page through the results.

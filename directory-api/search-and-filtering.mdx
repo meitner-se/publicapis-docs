@@ -1,0 +1,109 @@
+---
+title: 'Search & Filtering'
+description: 'How to use the /_search endpoint in the **Meitner Directory API** for advanced filtering.'
+---
+
+Some resources in the Directory API support a `/_search` endpoint, which allows for advanced filtering and querying.
+
+### Request
+
+Search requests are sent as a `POST` request to:
+
+```
+POST /:resource/_search
+```
+
+The request body must be a JSON object with a `filter` field that defines your query conditions.
+
+### JSON Structure
+
+```json
+{
+  "filter": {
+    "orCondition": true,
+    "nestedFilters": [],
+    "equals": {},
+    "notEquals": {},
+    "greater": {},
+    "smaller": {},
+    "greaterOrEqual": {},
+    "smallerOrEqual": {},
+    "contains": {},
+    "notContains": {},
+    "like": {},
+    "notLike": {},
+    "null": {},
+    "notNull": {}
+  }
+}
+```
+
+### Filter Operators
+
+| Operator         | Description                                    | Applies To                            |
+|------------------|------------------------------------------------|----------------------------------------|
+| `equals`         | Exact match on one or more fields              | All field types                        |
+| `notEquals`      | Not equal to the given value                   | All field types                        |
+| `greater`        | Greater than the given value                   | `Date`, `Timestamp`, `Integer`         |
+| `smaller`        | Smaller than the given value                   | `Date`, `Timestamp`, `Integer`         |
+| `greaterOrEqual` | Greater than or equal to the given value       | `Date`, `Timestamp`, `Integer`         |
+| `smallerOrEqual` | Smaller than or equal to the given value       | `Date`, `Timestamp`, `Integer`         |
+| `contains`       | Field contains the value                       | `String`, `Date`, `UUID`, `Enum`, `Array` |
+| `notContains`    | Field does not contain the value               | `String`, `Date`, `UUID`, `Enum`, `Array` |
+| `like`           | Partial string match (case-insensitive)        | `String`                               |
+| `notLike`        | Partial string mismatch                        | `String`                               |
+| `null`           | Field must be null                             | Nullable fields and arrays             |
+| `notNull`        | Field must not be null                         | Nullable fields and arrays             |
+
+### Logical Operators
+
+- `orCondition`:  
+  When `true`, filters at this level are combined using **OR** logic (any condition can match).  
+  When `false` or omitted, filters use **AND** logic (all conditions must match).  
+  This applies both at the root level and inside `nestedFilters`.
+
+- `nestedFilters`:  
+  A list of additional filter objects that are evaluated as a group, allowing for nested logic.
+
+> **Note:** Field names used in filters must match the exact field names defined in the resource schema (typically camelCase).
+
+### Example: Search Request
+
+Find all **StudentPlacements** that are in `schoolYear` 7 **and** either:
+- have an `endDate` after 2025-04-24, **or**
+- have no `endDate` at all.
+
+```http
+POST /student-placement/_search
+Content-Type: application/json
+```
+
+```json
+{
+  "filter": {
+    "orCondition": false,
+    "equals": {
+      "schoolYear": "7"
+    },
+    "nestedFilters": [
+      {
+        "orCondition": true,
+        "greater": {
+          "endDate": "2025-04-24"
+        },
+        "null": {
+          "endDate": true
+        }
+      }
+    ]
+  }
+}
+```
+
+#### Equivalent SQL
+
+```sql
+SELECT * FROM student_placements WHERE school_year = '7' AND (end_date > '2025-04-24' OR end_date IS NULL);
+```
+
+> This example helps illustrate how `orCondition` and `nestedFilters` map to grouped `AND`/`OR` conditions in SQL.

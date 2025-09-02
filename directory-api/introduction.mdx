@@ -1,4 +1,195 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'The Directory API is part of Meitners RESTful APIs that can be used to programmatically create and manage admin-controlled resources owned by an organization in Meitner.'
 ---
+
+# Directory API
+
+The Directory API is part of Meitner’s RESTful API suite. It enables organizations to programmatically manage admin-controlled resources. Some example use cases include:
+- Managing schools and their properties
+- Creating and managing groups and group memberships
+- Creating and managing user types:
+  - Employees
+  - Guardians
+  - Students
+
+The API is organized around [REST](https://en.wikipedia.org/wiki/REST) principles. It uses predictable, resource-oriented URLs, accepts JSON-encoded request bodies for `POST` and `PATCH` requests (_when a body is required_), and returns JSON-encoded responses. Query parameters can be used for pagination.
+
+Standard HTTP verbs and status codes are used throughout, and all requests require authentication.
+
+> **Note:** The Meitner API does not support bulk updates — you can modify only one object per request.
+
+## Endpoint
+
+Meitner's Directory API is available at:
+
+```
+https://api.meitner.se/directory/v1
+```
+
+For testing and debugging, you can use our staging environment:
+
+```
+https://api.staging.meitner.se/directory/v1
+```
+
+## Authentication
+
+All requests to the Meitner Directory API must be authenticated.
+
+Authentication is handled via two required headers:
+
+- `Client-ID`: Your public client identifier.
+- `Client-Secret`: A secret key tied to your client ID.
+
+```curl
+curl -H "Client-ID: your-client-id" -H "Client-Secret: your-client-secret" https://api.meitner.se/directory/v1/student
+```
+
+We are currently evaluating improvements to our authentication flow to enhance security and simplify integration. Future changes may include rotating secrets, OAuth support, or scoped access tokens.
+
+## Resource Structure
+
+The Meitner API uses a consistent and straightforward structure for working with resources:
+
+- `POST /student` Creates a new student.
+- `PATCH /student/:id` Updates an existing student.
+- `GET /student` Lists all students. Supports `limit` and `offset` query parameters for pagination. See the [Pagination](directory/pagination) section for more details.
+- `GET /student/:id` Retrieves a specific student by ID.
+- `DELETE /student/:id` Deletes a specific student.
+- `POST /student/_search` Supports advanced filtering using a type-safe JSON body. See the [Search/Filtering](directory/search-filtering) section for more details.
+
+> **Note:** Not all resources support every method—for example, creation may not be allowed for read-only resources.  
+> Some resources may also expose additional custom methods when needed.
+
+## Requests
+
+### Body
+
+We aim to keep request bodies minimal, requiring as few fields as possible.
+
+When creating a resource (`POST`), default values are applied automatically where possible. You only need to provide values if you want to override the defaults. Nullable fields will typically default to `null` if not provided.
+
+### Updates
+
+The Meitner API uses the `PATCH` method for updates, which allows **partial updates**. You only need to include the fields you want to change.
+
+We also differentiate between `undefined` and `null` values:
+
+- If a field is omitted from the request body, it is treated as **undefined** and left unchanged.
+- If a field is included with the value `null`, it will explicitly **overwrite** the existing value with `null`.
+
+#### Example
+
+Let’s say a student has the following data:
+
+```json
+{
+  "name": "Alice",
+  "email": "alice@example.com"
+}
+```
+
+If you want to update only the email:
+
+```http
+PATCH /student/123
+Content-Type: application/json
+
+{
+  "email": "new-email@example.com"
+}
+```
+
+Result:
+
+```json
+{
+  "name": "Alice",
+  "email": "new-email@example.com"
+}
+```
+
+If you want to remove the email entirely:
+
+```http
+PATCH /student/123
+Content-Type: application/json
+
+{
+  "email": null
+}
+```
+
+Result:
+
+```json
+{
+  "name": "Alice",
+  "email": null
+}
+```
+
+#### Arrays
+
+For array fields, any update replaces the entire array:
+
+- Sending an array like `["id1", "id2"]` will fully replace the existing values.
+- Sending an empty array (`[]`) or `null` will **clear** all existing values.
+
+For example, a guardian’s `studentIDs` field will be fully overwritten if included in the request, regardless of its previous contents.
+
+## Responses
+
+### Body
+
+When retrieving, creating, or updating a resource, the API returns the resource directly in the JSON body:
+
+```json
+{
+  "name": "Alice",
+  "email": ""
+}
+```
+
+When the response includes multiple rows for a resource, the body returns a data field with an array:
+
+```json
+{
+   "data": [
+      {
+         "name": "Alice",
+         "email": ""
+      }
+   ]
+}
+```
+
+### Warnings
+
+_Coming soon._
+
+### Errors
+
+_Coming soon._
+
+### Status Codes
+
+The Meitner API uses a fixed set of standard HTTP status codes to indicate the result of a request:
+
+| Code | Meaning                            | Description |
+|------|------------------------------------|-------------|
+| `200` | OK                                | The request succeeded and a response body is included. |
+| `201` | Created                           | The resource was successfully created. |
+| `204` | No Content                        | The request succeeded but there's no response body (commonly used for deletes). |
+| `400` | Bad Request                       | The request was malformed or contained invalid parameters. |
+| `401` | Unauthorized                      | The request is missing valid authentication credentials. |
+| `403` | Forbidden                         | Authentication succeeded, but the user is not allowed to perform the operation. |
+| `404` | Not Found                         | The requested resource or endpoint does not exist. This can happen if a resource ID is invalid or the route is unknown. |
+| `409` | Conflict | The request could not be completed due to a conflict, such as a resource with dependencies that prevent deletion. |
+| `422` | Unprocessable Entity              | The request was well-formed but failed validation (e.g. invalid field format or constraints). |
+| `429` | Too Many Requests                 | The rate limit has been exceeded. See the [Rate Limiting](directory/rate-limiting) section for more details. |
+| `500` | Internal Server Error             | An unexpected error occurred on the server side. |
+
+> **Note:** If a request fails, the response body typically includes an error object with more details.  
+> If a `500` error occurs, Meitner staff is automatically alerted and will investigate the issue.

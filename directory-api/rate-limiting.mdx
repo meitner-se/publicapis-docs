@@ -1,0 +1,60 @@
+---
+title: 'Rate Limiting'
+description: '---' # TODO : update description
+keywords: ['rate', 'limit', 'ratelimited', '429']
+---
+
+Calls to our API are rate limited to provide equitable access to the API for everyone and to prevent abuse. We are going to be evolving these limits as we gather more information, and encourage your feedback. Any changes to limits will be announced in our Slack community's [API announcements channel](https://meitnerapi.slack.com/archives/C08JMJ5J1DW).
+
+We use the [leaky bucket](https://en.wikipedia.org/wiki/Leaky_bucket) algorithm for our rate limiters, which means that your tokens are refilled with a constant rate of `LIMIT_AMOUNT / LIMIT_PERIOD`.
+
+```
+If you temporarily require higher limits, you can request them by contacting us where we'll review them on a case by case basis.
+```
+
+## Avoiding hitting limits
+
+These are best practices for using our APIs that will, in most cases, avoid hitting any rate limits.
+
+### Avoid polling⁠
+
+We strongly discourage polling the API to check for updates, as it can lead to unnecessary load and rate limiting. While we don’t support webhooks yet, we plan to add that functionality soon. If you have a specific use case in mind, let us know—it helps us prioritize what to build next.
+
+### Avoid fetching unneeded data⁠
+
+Avoid fetching data you don't need by using our [search](search-filtering) functionality. This way you can drill down on specific records only and avoid pagination.
+
+## API request limits
+
+We limit the amount of requests you make to our API. To make it easier to keep track and avoid going over the limits, there are 3 HTTP response headers we send back on each request.
+
+
+| HTTP Header | Description |
+| ----------- | ----------- |
+| RateLimit-Limit | The maximum number of API requests you're permitted to make per hour. |
+| RateLimit-Remaining | The number of API requests remaining in the current rate limit window. |
+| RateLimit-Reset | The time at which the current rate limit window resets in UTC epoch milliseconds. |
+
+When authenticated using an API key you can make up to 1,500 requests per hour. Requests are associated with the authenticated user, which means all requests by the same user share the same quota even when using different API keys.
+
+### Handling rate limit errors
+
+Once you actually exceed rate limits, Meitner API will start returning rate limit error responses. You can catch these by checking the response status code and the errors in the response body containing the RATELIMITED error code.
+
+```
+StatusCode 429 TooManyRequests
+```
+
+```json
+{
+  "errors": [
+    {
+      "message": "...",
+      "extensions": {
+        "code": "RATELIMITED",
+        ...
+      }
+    }
+  ]
+}
+```
