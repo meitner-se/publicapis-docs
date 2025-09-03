@@ -30,18 +30,18 @@
             "group": "Getting started",
             "icon": "rocket-launch",
             "pages": [
-              "directory-api/introduction",
-              "directory-api/rate-limiting",
-              "directory-api/deprecations",
-              "directory-api/pagination",
-              "directory-api/search-and-filtering"
+              "directory-api/getting-started/introduction",
+              "directory-api/getting-started/rate-limiting",
+              "directory-api/getting-started/deprecations",
+              "directory-api/getting-started/pagination",
+              "directory-api/getting-started/search-and-filtering"
             ]
           },
           {
             "group": "Guides",
             "icon": "book",
             "pages": [
-              "directory-api/guides"
+              "directory-api/"
             ]
           },
           {
