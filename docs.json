@@ -41,7 +41,7 @@
             "group": "Guides",
             "icon": "book",
             "pages": [
-              "directory-api/"
+              "directory-api/guides/building-an-integration"
             ]
           },
           {

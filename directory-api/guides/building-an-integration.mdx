@@ -1,0 +1,180 @@
+---
+title: 'Building an integration'
+description: 'This guide shows how you can integrate your external system with Meitner in a smooth and safe way.'
+icon: 'rotate'
+---
+
+## External Metadata
+
+Every object in Meitner (Student, Employee, Group, etc.) contains an `external` field:
+
+```json
+{
+  "external": {
+    "source": "ExternalSystemName",
+    "sourceID": "external-unique-id"
+  }
+}
+```
+
+Use this `external` object to track which records belong to your system.
+
+- `source`: the name of your external system
+- `sourceID`: the external system’s unique ID for the object
+
+This allows Meitner to know who controls the object, even if users interact with it inside Meitner too.
+
+---
+
+## Handling Data Created Directly in Meitner
+
+Sometimes an organization allows both direct creation in Meitner *and* via the external system.  
+To avoid conflicts, you’ll need a **reconciliation job** to "claim" any matching records.
+
+Example flow:
+
+1. **Scheduled job** runs every X minutes.
+2. Fetch all objects where:
+   - `createdAt` > last job run
+   - `external.source` is `NULL`
+   - object’s identifier (like `identityNumber`) matches one in your system
+
+3. **If match found:** update the record’s `external` field so your system takes ownership.
+
+### Pseudocode example:
+
+```pseudo
+for each student in Meitner where createdAt > lastRun and external.source == null:
+    if student.identityNumber in ExternalSystem.identityNumbers:
+        PATCH /student/:id
+        {
+          "external": {
+            "source": "ExternalSystem",
+            "sourceID": ExternalSystem.getIDByIdentityNumber(student.identityNumber)
+          }
+        }
+```
+
+**Constraints for other objects:**
+
+| Object             | Matching Constraint                        |
+|--------------------|--------------------------------------------|
+| Student, Guardian, Employee | `identityNumber`                    |
+| StudentPlacement   | `studentID + schoolID`                     |
+| EmployeePlacement  | `employeeID + schoolID`                    |
+| Group              | `schoolID + title`                         |
+
+> ⚡ **Soon:** Meitner will support Webhooks, so you can skip polling and react instantly when new objects are created!
+
+---
+
+### StudentPlacement
+
+When a student is removed in your external system:
+
+- **Do not delete the `StudentPlacement` immediately!**  
+- Instead, set the `endDate` on the `StudentPlacement` to the student's removal date.
+- After a configurable grace period (e.g., **7 days**), archive the `StudentPlacement`.
+- Once a `StudentPlacement` has been archived for a certain number of years (e.g., **2 years**), it can be safely deleted.
+
+> **Important:**  
+> The exact number of **days to wait before archiving** and **years to wait before deleting** should be decided by the school or organization based on their own internal policies and any authority requirements.
+
+If the student returns to the school before deletion, you can **restore** the archived `StudentPlacement` instead of creating a new one.
+
+---
+
+### Example flow:
+
+```pseudo
+# 1. Mark the placement with an end date
+PATCH /student-placement/:id
+{
+  "endDate": "2025-06-15"
+}
+
+# 2. After 7 days (or your chosen grace period), archive the placement
+PATCH /student-placement/:id/archive
+
+# 3. Optional: Restore if needed
+PATCH /student-placement/:id/restore
+
+# 4. After 2+ years archived (or your chosen retention period), delete permanently
+DELETE /student-placement/:id
+```
+
+---
+
+#### Best Practices
+
+- **Always prefer archiving over deleting immediately.**  
+  Archiving disconnects relationships safely but preserves the placement record for audits, reports, and historical lookup.
+
+- **Choose generous retention windows.**  
+  If you're unsure, it's better to keep archived placements longer (e.g., 2–5 years) instead of risking premature data loss.
+
+- **Communicate with the organization.**  
+  Let schools decide how long to retain archived placements depending on legal, tax, or inspection requirements.
+
+- **Handle restores cleanly.**  
+  If a student returns after leaving, restoring an archived `StudentPlacement` is better than creating a brand-new record. It keeps history clean and minimizes duplication.
+
+---
+
+### Student
+
+When a student has **no active StudentPlacements**, it’s safe to delete the student:
+
+```pseudo
+if student has no studentPlacements:
+    DELETE /student/:id
+```
+
+---
+
+### EmployeePlacement
+
+Similar to StudentPlacements, **but with a twist**:
+
+- Set `endDate` when removed.
+- **Administrators** must archive manually inside Meitner’s UI to ensure important work materials are handed over.
+- If archived (i.e., `archiveYear` is set), you can delete the placement.
+
+**Example:**
+
+```pseudo
+PATCH /employee-placement/:id
+{
+  "endDate": "2025-06-15"
+}
+
+// Admin manually archives inside Meitner
+// Later...
+
+DELETE /employee-placement/:id
+```
+
+> 👀 Admins will see warnings in the UI for placements with a passed `endDate` that aren't archived yet, so they can take action.
+
+---
+
+### Employee
+
+When an employee has **no active EmployeePlacements**, it’s safe to delete:
+
+```pseudo
+if employee has no employeePlacements:
+    DELETE /employee/:id
+```
+
+---
+
+# Summary
+
+| Action                  | Rule                                                              |
+|--------------------------|-------------------------------------------------------------------|
+| Claim newly created data | Scheduled job, then Webhooks |
+| StudentPlacement removal | Set `endDate`, archive after X days, delete after Y years |
+| Student removal          | If no placements → delete |
+| EmployeePlacement removal| Set `endDate`, admin archives, then delete |
+| Employee removal         | If no placements → delete |
