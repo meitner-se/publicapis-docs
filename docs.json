@@ -59,6 +59,11 @@
             "pages": [
               "ss12000-api/introduction"
             ]
+          },
+          {
+            "group": "Reference",
+            "icon": "code",
+            "openapi": "https://meitner-api-docs.s3.eu-north-1.amazonaws.com/meitner_ss12000_version2_1_0.yaml"
           }
         ]
       }
