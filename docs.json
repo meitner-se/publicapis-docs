@@ -20,6 +20,9 @@
         "tab": "Overview",
         "pages": [
           "index",
+          "pricing",
+          "partnership",
+          "support",
           "changelog"
         ]
       },
