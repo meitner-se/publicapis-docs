@@ -50,7 +50,7 @@
           {
             "group": "Reference",
             "icon": "code",
-            "openapi": "directory-api/openapi.json"
+            "openapi": "https://api.staging.meitner.se/directory/v1/openapi.json"
           }
         ]
       },
