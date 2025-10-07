@@ -1,8 +1,8 @@
 ---
-title: 'Rate Limiting'
-description: 'How to use rate limiting to prevent abuse and ensure equitable access to the API.'
-keywords: ['rate', 'limit', 'ratelimited', '429']
-icon: 'hourglass'
+title: "Rate Limiting"
+description: "How to use rate limiting to prevent abuse and ensure equitable access to the API."
+keywords: ["rate","limit","ratelimited","429"]
+icon: "hourglass"
 ---
 
 Calls to our API are rate limited to provide equitable access to the API for everyone and to prevent abuse. We are going to be evolving these limits as we gather more information, and encourage your feedback. Any changes to limits will be announced in our Slack community's [API announcements channel](https://meitnerapi.slack.com/archives/C08JMJ5J1DW).
@@ -29,12 +29,11 @@ Avoid fetching data you don't need by using our [search](search-filtering) funct
 
 We limit the amount of requests you make to our API. To make it easier to keep track and avoid going over the limits, there are 3 HTTP response headers we send back on each request.
 
-
-| HTTP Header | Description |
-| ----------- | ----------- |
-| RateLimit-Limit | The maximum number of API requests you're permitted to make per hour. |
-| RateLimit-Remaining | The number of API requests remaining in the current rate limit window. |
-| RateLimit-Reset | The time at which the current rate limit window resets in UTC epoch milliseconds. |
+| HTTP Header         | Description                                                                       |
+| ------------------- | --------------------------------------------------------------------------------- |
+| RateLimit-Limit     | The maximum number of API requests you're permitted to make per hour.             |
+| RateLimit-Remaining | The number of API requests remaining in the current rate limit window.            |
+| RateLimit-Reset     | The time at which the current rate limit window resets in UTC epoch milliseconds. |
 
 When authenticated using an API key you can make up to 1,500 requests per hour. Requests are associated with the authenticated user, which means all requests by the same user share the same quota even when using different API keys.
 
@@ -48,14 +47,10 @@ StatusCode 429 TooManyRequests
 
 ```json
 {
-  "errors": [
-    {
-      "message": "...",
-      "extensions": {
-        "code": "RATELIMITED",
-        ...
-      }
-    }
-  ]
+  "error": {
+    "code": "RateLimited",
+    "message": "Too many requests - rate limit exceeded",
+    "requestID": "550e8400-e29b-41d4-a716-446655440000"
+  }
 }
 ```
