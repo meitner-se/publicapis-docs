@@ -82,8 +82,8 @@
     }
   },
   "logo": {
-    "light": "./meitner-logo.svg",
-    "dark": "./meitner-logo.svg"
+    "light": "./meitner-logo-light.svg",
+    "dark": "./meitner-logo-dark.svg"
   },
   "navbar": {
     "links": [
@@ -98,8 +98,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Platform",
+      "href": "https://sso.meitner.se"
     }
   },
   "contextual": {
