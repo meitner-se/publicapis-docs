@@ -50,7 +50,7 @@
           {
             "group": "Reference",
             "icon": "code",
-            "openapi": "https://api.staging.meitner.se/directory/v1/openapi.json"
+            "openapi": "https://spec.speakeasy.com/meitner-2u8/api/directory-api-with-code-samples"
           }
         ]
       },
