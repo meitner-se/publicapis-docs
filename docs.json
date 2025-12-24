@@ -27,6 +27,22 @@
         ]
       },
       {
+        "tab": "DataExport API",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "data-export-api/introduction"
+            ]
+          },
+          {
+            "group": "Reference",
+            "icon": "code",
+            "openapi": "https://api.meitner.se/data-export/v1/openapi.json"
+          }
+        ]
+      },
+      {
         "tab": "Directory API",
         "groups": [
           {
