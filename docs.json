@@ -38,7 +38,10 @@
           {
             "group": "Reference",
             "icon": "code",
-            "openapi": "https://api.meitner.se/data-export/v1/openapi.json"
+            "openapi": {
+              "source": "https://api.meitner.se/data-export/v1/openapi.json",
+              "directory": "data-export-api"
+            }
           }
         ]
       },
@@ -66,7 +69,10 @@
           {
             "group": "Reference",
             "icon": "code",
-            "openapi": "https://spec.speakeasy.com/meitner-2u8/api/directory-api-with-code-samples"
+            "openapi": {
+              "source": "https://spec.speakeasy.com/meitner-2u8/api/directory-api-with-code-samples",
+              "directory": "directory-api"
+            }
           }
         ]
       },
@@ -82,7 +88,10 @@
           {
             "group": "Reference",
             "icon": "code",
-            "openapi": "https://meitner-api-docs.s3.eu-north-1.amazonaws.com/meitner_ss12000_version2_1_0.yaml"
+            "openapi": {
+              "source": "https://meitner-api-docs.s3.eu-north-1.amazonaws.com/meitner_ss12000_version2_1_0.yaml",
+              "directory": "ss12000-api"
+            }
           }
         ]
       }
