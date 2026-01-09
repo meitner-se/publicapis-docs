@@ -1,3 +1,164 @@
 ---
-title: "Introduction"
+title: 'Introduction'
+description: 'The Data Export API enables you to export data from Meitner to business intelligence systems for analysis and reporting.'
+icon: 'database'
 ---
+
+# Data Export API
+
+The Data Export API is part of Meitner's RESTful API suite. It enables organizations to export data from Meitner to business intelligence (BI) systems, data warehouses, and analytics platforms for deeper analysis, reporting, and insights.
+
+The API is designed specifically for data export use cases, allowing you to:
+- Export large datasets efficiently for BI tools like Power BI, Tableau, or Looker
+- Extract historical data for trend analysis and reporting
+- Build custom dashboards and analytics solutions
+- Perform data warehousing and ETL (Extract, Transform, Load) operations
+- Create automated reporting pipelines
+
+The API is organized around [REST](https://en.wikipedia.org/wiki/REST) principles. It uses predictable, resource-oriented URLs, returns JSON-encoded responses, and supports pagination for handling large datasets efficiently.
+
+Standard HTTP verbs and status codes are used throughout, and all requests require authentication.
+
+## Endpoint
+
+Meitner's Data Export API is available at:
+
+```
+https://api.meitner.se/data-export/v1
+```
+
+For testing and debugging, you can use our staging environment:
+
+```
+https://api.staging.meitner.se/data-export/v1
+```
+
+## Authentication
+
+All requests to the Meitner Data Export API must be authenticated.
+
+<Info>
+**Free API Keys**: All Meitner clients receive API keys at no extra cost. We believe you own your data and should have access to it through our APIs. [Learn more about our pricing and API access](/pricing).
+</Info>
+
+Authentication is handled via two required headers:
+
+- `Client-ID`: Your public client identifier.
+- `Client-Secret`: A secret key tied to your client ID.
+
+```curl
+curl -H "Client-ID: your-client-id" -H "Client-Secret: your-client-secret" https://api.meitner.se/data-export/v1/student
+```
+
+We are currently evaluating improvements to our authentication flow to enhance security and simplify integration. Future changes may include rotating secrets, OAuth support, or scoped access tokens.
+
+## Available Data Resources
+
+The Data Export API provides access to the following data resources for export:
+
+- **Student Data** (`/student`) - Student information and details
+- **Attendance** (`/attendance`) - Current attendance records
+- **Attendance Archive** (`/attendance-archive`) - Historical attendance data
+- **Criterion Results** (`/criterion-result`) - Assessment and evaluation results
+- **Elementary Grades** (`/elementary-grade`) - Grade data for elementary education
+- **Elementary Grade Merits** (`/elementary-grade-merit`) - Merit-based grades for elementary education
+- **Gymnasium Grades** (`/gymnasium-grade`) - Grade data for gymnasium (upper secondary) education
+
+Each resource endpoint supports listing operations with pagination to handle large datasets efficiently.
+
+## Resource Structure
+
+The Data Export API uses a consistent structure for working with data resources:
+
+- `GET /{resource}` - Lists all records for a resource. Supports `limit` and `offset` query parameters for pagination.
+
+All endpoints return JSON-encoded responses, making it easy to integrate with BI tools and data processing pipelines.
+
+## Pagination
+
+Large datasets are handled through pagination using query parameters:
+
+- `limit`: The maximum number of items to return (default: 50)
+- `offset`: The number of items to skip before starting to return results (default: 0)
+
+```http
+GET /student?limit=100&offset=0
+```
+
+When you receive a paginated response, you can increment the `offset` parameter to fetch subsequent pages:
+
+```http
+GET /student?limit=100&offset=100
+GET /student?limit=100&offset=200
+```
+
+Continue until you've retrieved all the data you need.
+
+## Responses
+
+### Body
+
+When retrieving a list of resources, the API returns a data field with an array:
+
+```json
+{
+  "data": [
+    {
+      "id": "123",
+      "name": "Alice",
+      "email": "alice@example.com"
+    },
+    {
+      "id": "124",
+      "name": "Bob",
+      "email": "bob@example.com"
+    }
+  ]
+}
+```
+
+### Status Codes
+
+The Data Export API uses standard HTTP status codes to indicate the result of a request:
+
+| Code | Meaning                            | Description |
+|------|------------------------------------|-------------|
+| `200` | OK                                | The request succeeded and a response body is included. |
+| `400` | Bad Request                       | The request was malformed or contained invalid parameters. |
+| `401` | Unauthorized                      | The request is missing valid authentication credentials. |
+| `403` | Forbidden                         | Authentication succeeded, but the user is not allowed to perform the operation. |
+| `404` | Not Found                         | The requested resource or endpoint does not exist. |
+| `409` | Conflict                          | The request could not be completed due to a conflict. |
+| `429` | Too Many Requests                 | The rate limit has been exceeded. See rate limiting best practices below. |
+| `500` | Internal Server Error             | An unexpected error occurred on the server side. |
+
+> **Note:** If a request fails, the response body typically includes an error object with more details.  
+> If a `500` error occurs, Meitner staff is automatically alerted and will investigate the issue.
+
+## Integration with Business Intelligence Tools
+
+### Common Use Cases
+
+The Data Export API is designed to work seamlessly with popular BI and analytics tools:
+
+1. **Power BI / Tableau / Looker**: Export data on a schedule and load it into your BI tool's data model for visualization and analysis.
+
+2. **Data Warehouses**: Extract data and load it into your data warehouse (e.g., Snowflake, BigQuery, Redshift) for centralized analytics.
+
+3. **ETL Pipelines**: Use the API as a source in your ETL workflows to automate regular data exports and transformations.
+
+4. **Custom Analytics**: Build custom dashboards and reporting solutions by fetching data from the API and processing it in your application.
+
+### Best Practices
+
+When integrating with BI systems, consider the following:
+
+- **Incremental Exports**: For large datasets, implement incremental export strategies by tracking the last export timestamp and only fetching new or updated records.
+
+- **Rate Limiting**: Be mindful of rate limits when building automated export jobs. Implement appropriate retry logic with exponential backoff for `429` responses.
+
+- **Data Transformation**: The API returns JSON, which you may need to transform into the format expected by your BI tool (CSV, Parquet, etc.).
+
+- **Scheduled Exports**: Set up scheduled jobs (e.g., daily, weekly) to keep your BI dashboards up to date with the latest data from Meitner.
+
+- **Error Handling**: Implement robust error handling and logging for your export jobs to ensure data integrity and troubleshoot issues quickly.
