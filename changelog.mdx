@@ -4,7 +4,19 @@ description: "Product updates and announcements"
 icon: "clock"
 rss: true
 ---
-<Update label="October 2025">
+<Update label="January 2025" tags={["DirectoryAPI", "DataExportAPI"]}>
+  We've added the DataExport API to provide enhanced data export capabilities. Please note that this API is not yet supported in our official SDKs, but you can integrate with it directly using the API endpoints.
+
+  We've also added the **MealPlanner** role to EmployeePlacement in the Directory API. This new role expands the functionality available for employee placement management.
+
+  **Important SDK Update Requirements:**
+  - Users of our official SDKs need to upgrade to at least **v0.4.0 for Python** and **v0.3.0 for C#** to access the new MealPlanner role.
+  - Users with handwritten packages need to update their own implementations.
+  - Handwritten package updates will not take effect until **February 27th, 2025**.
+  - Older SDK versions will no longer be supported starting **February 27th, 2025**.
+</Update>
+
+<Update label="October 2025" tags={["DirectoryAPI"]}>
   We're excited to announce the release of our official client libraries for C# and Python! These libraries make it easier to integrate with the Meitner API.
 
   - **C# Client Library**: [github.com/meitner-se/api-client-csharp](https://github.com/meitner-se/api-client-csharp)
