@@ -85,7 +85,7 @@ def get_access_token(client_id, client_secret):
 token, expires_in = get_access_token("YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET")
 
 headers = {"Authorization": f"Bearer {token}"}
-response = requests.get("https://api.meitner.se/v1/Query_DirectoryService.ListUnits", headers=headers)
+response = requests.get("https://api.meitner.se/directory/v1/school", headers=headers)
 ```
 
 <Note>
