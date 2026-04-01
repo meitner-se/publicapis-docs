@@ -91,3 +91,7 @@ response = requests.get("https://api.meitner.se/v1/Query_DirectoryService.ListUn
 <Note>
 Track `expires_in` in your application and proactively refresh the token before it expires to avoid failed requests.
 </Note>
+
+<Tip>
+If you are using the **Directory API SDK**, token refresh is handled automatically — you don't need to manage token expiry yourself.
+</Tip>
