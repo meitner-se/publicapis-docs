@@ -24,3 +24,30 @@ rss: true
 
   Both libraries provide full type safety, async support, and comprehensive documentation to help you get started quickly.
 </Update>
+
+<Update label="April 2026" tags={["DirectoryAPI", "Authentication"]}>
+  ### New: OAuth 2.0 authentication
+
+  You can now authenticate API requests using an **OAuth 2.0 Bearer token** in addition to the existing Client-ID / Client-Secret header method. Request a token at `POST /oauth/token` using the Client Credentials grant, then send it as `Authorization: Bearer <token>` on subsequent requests.
+
+  The legacy Client-ID / Client-Secret method remains fully supported — no action required for existing integrations. See the [Authentication guide](/authentication) for details.
+
+  ### New: Grading endpoints in the Directory API
+
+  The Directory API now exposes two new resources for reading and managing student grades:
+
+  - [**GradeElementary**](/directory-api/gradeelementary/list-gradeelementaries) — grades for compulsory school years 6–9. Supports `GET`, `LIST`, `POST`, `PATCH`, and `DELETE`.
+  - [**GradeUpperSecondary**](/directory-api/gradeuppersecondary/list-gradeuppersecondaries) — grades for upper secondary years 1–3, including course extent (Normal / Extended / Reduced) and course section (General / Program / Orientation / Specialization / Individual / Project / Elementary). Supports `GET`, `LIST`, `POST`, `PATCH`, and `DELETE`.
+
+  Both use the standard grading scale (`A`, `B`, `C`, `D`, `E`, `F`, `MISSING`) and grade term (`HT`, `VT`).
+
+  ### New: `eduPersonPrincipalName` on `Student` and `Employee`
+
+  `Student` and `Employee` resources now expose an optional `eduPersonPrincipalName` (EPPN) field — a globally unique, persistent identifier used to identify users across Swedish e-services (SS12000:2020, TK450). Format: `localIdentifier@domain` (e.g. `kalko@edu.goteborg.se`).
+
+  The field is nullable and supports read, create, and update operations. It is not exposed on `Guardian`.
+
+  ### Fix: `StudentPlacement` update auto-restores archived placements
+
+  Calling `PATCH /student-placements/{id}` on an archived placement with `endDate` set to `null` or a future date now automatically restores the placement to active status, consistent with the behavior of `EmployeePlacement`. Previously, archived placements remained archived even after the end date was cleared, requiring an explicit call to the restore endpoint.
+</Update>
