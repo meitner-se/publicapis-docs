@@ -68,6 +68,41 @@ for each student in Meitner where createdAt > lastRun and external.source == nul
 
 ---
 
+## Cross-School Group Memberships
+
+Some students attend extra classes at a school other than their home school — mother tongue, music, electives, introductory programmes, etc. In Meitner, a student must have a `StudentPlacement` at every school they attend, including these.
+
+When updating a group with members from a different school than the students' home school, your integration must ensure a `StudentPlacement` exists at the group's school **before** including the student in the group's `memberIDs`. Meitner will reject the update otherwise.
+
+The data needed is already available: every group has an organization reference, and every membership has a person reference.
+
+```pseudo
+for each group in source.groups:
+    school = group.organisation
+
+    for each membership in group.memberships:
+        student = membership.person
+
+        # Ensure placement at the group's school
+        if not Meitner.hasStudentPlacement(student, school):
+            POST /student-placement
+            {
+              "studentID": student.id,
+              "schoolID": school.id,
+              "external": { "source": "...", "sourceID": "..." }
+            }
+
+    # memberIDs are part of the group payload — no separate call needed
+    PATCH /group/:id
+    {
+      "memberIDs": [ ...student IDs... ]
+    }
+```
+
+The check is idempotent — if the placement already exists, skip the create. Use the same `external.source` / `external.sourceID` convention as elsewhere so the placement remains under your system's control.
+
+---
+
 ### StudentPlacement
 
 When a student is removed in your external system:
