@@ -4,26 +4,8 @@ description: "Product updates and announcements"
 icon: "clock"
 rss: true
 ---
-<Update label="January 2025" tags={["DirectoryAPI", "DataExportAPI"]}>
-  We've added the DataExport API to provide enhanced data export capabilities. Please note that this API is not yet supported in our official SDKs, but you can integrate with it directly using the API endpoints.
 
-  We've also added the **MealPlanner** role to EmployeePlacement in the Directory API. This new role expands the functionality available for employee placement management.
-
-  **Important SDK Update Requirements:**
-  - Users of our official SDKs need to upgrade to at least **v0.4.0 for Python** and **v0.3.0 for C#** to access the new MealPlanner role.
-  - Users with handwritten packages need to update their own implementations.
-  - Handwritten package updates will not take effect until **February 27th, 2025**.
-  - Older SDK versions will no longer be supported starting **February 27th, 2025**.
-</Update>
-
-<Update label="October 2025" tags={["DirectoryAPI"]}>
-  We're excited to announce the release of our official client libraries for C# and Python! These libraries make it easier to integrate with the Meitner API.
-
-  - **C# Client Library**: [github.com/meitner-se/api-client-csharp](https://github.com/meitner-se/api-client-csharp)
-  - **Python Client Library**: [github.com/meitner-se/api-client-python](https://github.com/meitner-se/api-client-python)
-
-  Both libraries provide full type safety, async support, and comprehensive documentation to help you get started quickly.
-</Update>
+{/* New changelog entries go at the top (newest first). */}
 
 <Update label="April 2026" tags={["DirectoryAPI", "Authentication"]}>
   ### New: OAuth 2.0 authentication
@@ -50,4 +32,25 @@ rss: true
   ### Fix: `StudentPlacement` update auto-restores archived placements
 
   Calling `PATCH /student-placements/{id}` on an archived placement with `endDate` set to `null` or a future date now automatically restores the placement to active status, consistent with the behavior of `EmployeePlacement`. Previously, archived placements remained archived even after the end date was cleared, requiring an explicit call to the restore endpoint.
+</Update>
+
+<Update label="October 2025" tags={["DirectoryAPI"]}>
+  We're excited to announce the release of our official client libraries for C# and Python! These libraries make it easier to integrate with the Meitner API.
+
+  - **C# Client Library**: [github.com/meitner-se/api-client-csharp](https://github.com/meitner-se/api-client-csharp)
+  - **Python Client Library**: [github.com/meitner-se/api-client-python](https://github.com/meitner-se/api-client-python)
+
+  Both libraries provide full type safety, async support, and comprehensive documentation to help you get started quickly.
+</Update>
+
+<Update label="January 2025" tags={["DirectoryAPI", "DataExportAPI"]}>
+  We've added the DataExport API to provide enhanced data export capabilities. Please note that this API is not yet supported in our official SDKs, but you can integrate with it directly using the API endpoints.
+
+  We've also added the **MealPlanner** role to EmployeePlacement in the Directory API. This new role expands the functionality available for employee placement management.
+
+  **Important SDK Update Requirements:**
+  - Users of our official SDKs need to upgrade to at least **v0.4.0 for Python** and **v0.3.0 for C#** to access the new MealPlanner role.
+  - Users with handwritten packages need to update their own implementations.
+  - Handwritten package updates will not take effect until **February 27th, 2025**.
+  - Older SDK versions will no longer be supported starting **February 27th, 2025**.
 </Update>
